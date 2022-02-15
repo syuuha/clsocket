@@ -486,6 +486,13 @@ bool CSimpleSocket::Close(void)
 
     TranslateSocketError();
 
+#ifdef WIN32
+    //-------------------------------------------------------------------------
+    // Data structure containing clean Windows Sockets Info
+    //-------------------------------------------------------------------------
+    WSACleanup();
+#endif
+
     return bRetVal;
 }
 

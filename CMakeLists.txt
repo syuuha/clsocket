@@ -1,20 +1,24 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(clsocket)
 
+# set Debug ON
+set(CMAKE_BUILD_TYPE "Debug")
+
 # set up versioning.
 set(BUILD_MAJOR "1")
 set(BUILD_MINOR "4")
 set(BUILD_VERSION "3")
 set(BUILD_VERSION ${BUILD_MAJOR}.${BUILD_MINOR}.${BUILD_VERSION})
 
+include_directories(inc)
 include_directories(src)
 
 SET(CLSOCKET_HEADERS
-src/ActiveSocket.h
+inc/ActiveSocket.h
+inc/PassiveSocket.h
 src/Host.h
-src/PassiveSocket.h
-src/SimpleSocket.h
-src/StatTimer.h
+inc/SimpleSocket.h
+inc/StatTimer.h
 )
 
 SET(CLSOCKET_SOURCES
@@ -40,7 +44,10 @@ if(UNIX)
         add_definitions(-D_DARWIN)
     endif()
 elseif(WIN32)
+    # for windows
     add_definitions(-DWIN32)
+    set(CMAKE_C_COMPILER "gcc")
+    set(CMAKE_CXX_COMPILER "g++")
     SET(PROJECT_LIBS Ws2_32.lib)
     if(MINGW)
         # Special MINGW stuff here
@@ -83,6 +90,7 @@ endif()
 set_target_properties(clsocket PROPERTIES VERSION ${BUILD_VERSION}
                                           SOVERSION ${BUILD_MAJOR})
 
+# cmake -DCLSOCKET_EXAMPLES=ON .
 if(UNIX)
     OPTION(CLSOCKET_EXAMPLES "Build the examples" OFF)
 
@@ -101,3 +109,9 @@ if(UNIX)
     endif()
 endif()
 
+# test server & client
+ADD_EXECUTABLE(server examples/server.cpp examples/readConfigFile.cpp)
+TARGET_LINK_LIBRARIES(server clsocket pthread)
+
+ADD_EXECUTABLE(client examples/client.cpp examples/readConfigFile.cpp)
+TARGET_LINK_LIBRARIES(client clsocket pthread)

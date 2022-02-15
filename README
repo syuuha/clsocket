@@ -1,3 +1,78 @@
+[220209]
+1. use shorter marco
+2. other fix
+
+[220208-3]
+1. client remove send_exitKey, for windows server's bug? will exit all server's client_thread.
+
+[220208-2]
+1. add readConfigFile.cpp & conf.ini
+2. server&client use conf.ini to get ip/port/exitKey
+3. use macro for windows method : gettid, sleep, usleep
+4. use macro for win64 : long long i
+5. add fflush to fix windows's Git shell's printf problem : printf("log\r\n"); fflush(stdout);
+
+[220208]
+1. client remove pthread_detach(pthread_self());  to use pthread_join
+2. client add exitKey to quit
+3. server&client add pClient->GetSocketError() after pClientSocket->Receive() to avoid crash
+4. server&client use close_app(0) to exit
+
+[220207-2]
+1. add thread for client
+
+[220207]
+1. CMakeLists.txt : 
+  add debug for gdb : set(CMAKE_BUILD_TYPE "DEBUG")
+  cmd : ulimit -c 1024
+        gdb bin_name dump_core
+
+2. example rename : 
+  server(with client_thread) & client
+
+
+[220127] first fix.
+
+https://github.com/DFHack/clsocket/tree/master
+
+[CMakeLists.txt]
+1.对win, 设置C编译器, 设置C++编译器.  在Git窗口,mingw64编译.
+    if(WIN32)
+    set(CMAKE_C_COMPILER "gcc")
+    set(CMAKE_CXX_COMPILER "g++")
+    endif()
+
+2.移动public文件到inc目录
+    inc/ActiveSocket.h
+    inc/PassiveSocket.h
+    inc/SimpleSocket.h
+    inc/StatTimer.h
+
+3.CLSOCKET_EXAMPLES处,  CLSOCKET_EXAMPLES=ON 开启关闭选项
+
+4.最后增加TestServer, TestClient两个测试代码
+
+[编译命令]
+linux:
+    cmake -DCLSOCKET_EXAMPLES=ON .    (开启官方sample)
+    或 cmake .
+    make
+
+windows:
+    cmake -DCLSOCKET_EXAMPLES=ON -G "MinGW Makefiles" .    (开启官方sample)
+    或 cmake -G "MinGW Makefiles" .
+    make
+
+[代码]
+1. CSimpleSocket::Close(void)处, 添加WSACleanup();
+
+2. 改TestServer.cpp, 作为linux server
+
+3. 改TestClient.cpp, 作为windows client
+
+
+
+
 ------------------------------------------------------------------------------------------
 * History
 ------------------------------------------------------------------------------------------
